@@ -15,13 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-FROM centos:7 as args
+FROM centos:7 as env
 
-ARG ERLANG_VERSION=20.3.8.26
-ARG RIAK_VERSION=3.0
-ARG RIAK_RPM="riak-${RIAK_VERSION}-1.el7x86_64.rpm"
+ENV ERLANG_VERSION=20.3.8.26
+ENV RIAK_VERSION=3.0
+ENV RIAK_RPM="riak-${RIAK_VERSION}-1.el7x86_64.rpm"
 
-FROM args as builder
+FROM env as builder
 
 RUN set -o errexit -o nounset;\
     yum -y update;\
@@ -42,7 +42,7 @@ RUN set -o errexit -o nounset;\
 	make package;\
     mv "/tmp/riak/rel/pkg/out/packages/${RIAK_RPM}" /tmp/;
 
-FROM args
+FROM env
 
 EXPOSE 8087/tcp 8088/tcp 8098/tcp
 ENV RIAK_HOME=/usr/lib64/riak
